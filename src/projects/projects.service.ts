@@ -26,6 +26,10 @@ export class ProjectsService {
     try {
       const query = this.projectRepository.createQueryBuilder('projects');
 
+      if (status) {
+        query.where('projects.status = :x', { x: status });
+      }
+
       return await query.getMany();
     } catch (error) {
       throw new BadRequestException(error);
