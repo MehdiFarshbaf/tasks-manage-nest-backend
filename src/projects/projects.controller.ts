@@ -79,7 +79,7 @@ export class ProjectsController {
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: null,
-      message: 'Project with id ' + id,
+      message: 'Proect with id ' + id,
     });
   }
 }
