@@ -62,11 +62,33 @@ export class TasksService {
     return task;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: number, updateTaskDto: UpdateTaskDto) {
+    const { projectId, ...taskData } = updateTaskDto;
+
+    const task = await this.taskRepository.findOneBy({ id });
+    if (!task) throw new NotFoundException('Task not found');
+
+    const project = await this.projectRepository.findOneByOrFail({
+      id: projectId,
+    });
+    if (!project) throw new NotFoundException('project not found');
+
+    try {
+      const updateTask = await this.taskRepository.update(id, {
+        ...taskData,
+        project,
+      });
+      return updateTask;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: number) {
+    const result = await this.taskRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException('Task not found');
+    }
   }
 }
